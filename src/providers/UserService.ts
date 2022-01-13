@@ -16,6 +16,14 @@ export class UserService {
     return Object.assign({}, ourUser);
   }
 
+  addAssetIdToUser(email: string, assetId: string) {
+    const idx = this.users.findIndex((elem) => elem.email === email);
+    if (idx === -1) {
+      return;
+    }
+    this.users[idx].assetIds.push(assetId);
+  }
+
   findByEmail(email: string) {
     return this.users.find((s) => s.email === email);
   }

@@ -6,13 +6,18 @@ import {NotFound, NotModified} from "@tsed/exceptions";
 import {Student} from "../model/Student";
 import {StudentSocket} from "../providers/StudentSocket";
 import {Authorize} from "@tsed/passport";
+import {UserService} from "../providers/UserService";
 
 // TODO: pagination
 
 @Controller("/student")
 @Authorize("jwt")
 export class StudentController {
-  constructor(private readonly studentsService: StudentService, private readonly studentSocket: StudentSocket) {}
+  constructor(
+    private readonly studentsService: StudentService,
+    private readonly studentSocket: StudentSocket,
+    private readonly userService: UserService
+  ) {}
 
   @Get("/")
   @Returns(304, NotModified).Description("Not updated")
@@ -47,8 +52,9 @@ export class StudentController {
 
   @Post("/")
   @Returns(201, Student).Description("Student Created")
-  create(@BodyParams() student: Student) {
+  create(@BodyParams() student: Student, @Context() ctx: Context) {
     const ourStudent = this.studentsService.create(student);
+    this.userService.addAssetIdToUser(ctx.data.email, ourStudent.id);
     this.studentSocket.broadcastStudent("created", ourStudent);
     return ourStudent;
   }
