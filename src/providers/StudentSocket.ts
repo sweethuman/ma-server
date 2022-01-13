@@ -5,6 +5,11 @@ export class StudentSocket {
   @Namespace nsp: Namespace;
 
   broadcastStudent(event: "deleted" | "created" | "updated", payload: any) {
-    this.nsp.emit("student", {event, payload});
+    this.nsp.emit("student", {
+      event,
+      payload: {
+        item: payload
+      }
+    });
   }
 }

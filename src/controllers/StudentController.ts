@@ -10,7 +10,6 @@ import {Authorize} from "@tsed/passport";
 // TODO: pagination
 
 @Controller("/student")
-@Authorize("jwt")
 export class StudentController {
   constructor(private readonly studentsService: StudentService, private readonly studentSocket: StudentSocket) {}
 

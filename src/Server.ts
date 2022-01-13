@@ -20,6 +20,11 @@ import session from "express-session";
   mount: {
     "/": [`${rootDir}/controllers/**/*.ts`]
   },
+  socketIO: {
+    cors: {
+      origin: "*"
+    }
+  },
   views: {
     root: `${rootDir}/views`,
     extensions: {
