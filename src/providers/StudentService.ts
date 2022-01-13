@@ -51,18 +51,28 @@ export class StudentService {
     return this.students.find((s) => s.id === id);
   }
 
-  findByName(name: string, ids: string[]) {
+  findByName(name: string, ids: string[], facultyFilter: string) {
     return this.students
       .filter((item) => item.name.indexOf(name) !== -1)
+      .filter((item) => item.faculty.indexOf(facultyFilter) !== -1)
       .filter((item) => ids.indexOf(item.id) !== -1)
       .sort((n1, n2) => -(n1.date.getTime() - n2.date.getTime()));
   }
 
-  findAll(ids: string[]): Student[] {
-    return this.students.sort((n1, n2) => -(n1.date.getTime() - n2.date.getTime())).filter((item) => ids.indexOf(item.id) !== -1);
+  findAll(ids: string[], facultyFilter: string): Student[] {
+    return this.students
+      .sort((n1, n2) => -(n1.date.getTime() - n2.date.getTime()))
+      .filter((item) => ids.indexOf(item.id) !== -1)
+      .filter((item) => item.faculty.indexOf(facultyFilter) !== -1);
   }
 
   getLastUpdated(): Date {
     return this.lastUpdated;
+  }
+
+  getAvailableFilters(): string[] {
+    const filterSet = new Set<string>();
+    this.students.forEach((item) => filterSet.add(item.faculty));
+    return Array.from(filterSet);
   }
 }

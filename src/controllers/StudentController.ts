@@ -10,7 +10,7 @@ import {UserService} from "../providers/UserService";
 
 // TODO: pagination
 
-@Controller("/student")
+@Controller("/")
 @Authorize("jwt")
 export class StudentController {
   constructor(
@@ -19,13 +19,14 @@ export class StudentController {
     private readonly userService: UserService
   ) {}
 
-  @Get("/")
+  @Get("/student")
   @Returns(304, NotModified).Description("Not updated")
   @Returns(200, Student).Description("Success")
   get(
     @HeaderParams("If-Modified-Since") ifModifiedSince: string,
     @Context() ctx: Context,
     @QueryParams("name") name?: string,
+    @QueryParams("filter") filter?: string,
     @QueryParams("page") page?: string
   ) {
     const lastUpdated = this.studentsService.getLastUpdated();
@@ -33,13 +34,13 @@ export class StudentController {
       throw new NotModified("Students not modified since " + lastUpdated);
     }
     if (name) {
-      return this.studentsService.findByName(name, ctx.data.assetIds);
+      return this.studentsService.findByName(name, ctx.data.assetIds, filter ? filter : "");
     }
     ctx.response.setHeader("Last-Modified", lastUpdated.toUTCString());
-    return this.studentsService.findAll(ctx.data.assetIds);
+    return this.studentsService.findAll(ctx.data.assetIds, filter ? filter : "");
   }
 
-  @Get("/:id")
+  @Get("/student/:id")
   @Returns(404, NotFound).Description("Not found")
   @Returns(200, Student).Description("Success")
   getById(@PathParams("id") id: string) {
@@ -50,7 +51,7 @@ export class StudentController {
     return res;
   }
 
-  @Post("/")
+  @Post("/student")
   @Returns(201, Student).Description("Student Created")
   create(@BodyParams() student: Student, @Context() ctx: Context) {
     const ourStudent = this.studentsService.create(student);
@@ -59,7 +60,7 @@ export class StudentController {
     return ourStudent;
   }
 
-  @Put("/:id")
+  @Put("/student/:id")
   update(@BodyParams() student: Student, @PathParams("id") id: string) {
     const ourStudent = this.studentsService.updateById(id, student);
     if (ourStudent) {
@@ -68,7 +69,7 @@ export class StudentController {
     return ourStudent;
   }
 
-  @Delete("/:id")
+  @Delete("/student/:id")
   @Returns(204)
   delete(@PathParams("id") id: string) {
     const res = this.studentsService.deleteById(id);
@@ -76,5 +77,11 @@ export class StudentController {
       throw new NotFound("Student not found");
     }
     this.studentSocket.broadcastStudent("deleted", {id: id});
+  }
+
+  @Get("/studentfilter")
+  @Returns(200)
+  getAvailableFilters() {
+    return this.studentsService.getAvailableFilters();
   }
 }
