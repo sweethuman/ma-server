@@ -15,13 +15,15 @@ export class AuthController {
     if (!user || user.password != password) {
       throw new Unauthorized("Wrong password");
     }
-    return jwt.sign(
-      {
-        sub: email,
-        iss: "accounts.examplesoft.com",
-        aud: "yoursite.net"
-      },
-      "secret"
-    );
+    return {
+      token: jwt.sign(
+        {
+          sub: email,
+          iss: "accounts.examplesoft.com",
+          aud: "yoursite.net"
+        },
+        "secret"
+      )
+    };
   }
 }
