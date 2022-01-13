@@ -9,15 +9,14 @@ import cors from "cors";
 import "@tsed/ajv";
 import {config, rootDir} from "./config";
 import "@tsed/socketio";
+import "@tsed/passport";
+import session from "express-session";
 
 @Configuration({
   ...config,
   acceptMimes: ["application/json"],
   httpPort: process.env.PORT || 8083,
   httpsPort: false, // CHANGE
-  socketIO: {
-    path: "/socket"
-  },
   mount: {
     "/": [`${rootDir}/controllers/**/*.ts`]
   },
@@ -27,6 +26,9 @@ import "@tsed/socketio";
       ejs: "ejs"
     }
   },
+  componentsScan: [
+    `${rootDir}/protocols/*.ts` // scan protocols directory
+  ],
   exclude: ["**/*.spec.ts"]
 })
 export class Server {
@@ -46,6 +48,19 @@ export class Server {
       .use(
         bodyParser.urlencoded({
           extended: true
+        })
+      )
+      .use(
+        session({
+          secret: "secret",
+          resave: true,
+          saveUninitialized: true,
+          cookie: {
+            path: "/",
+            httpOnly: true,
+            secure: false,
+            maxAge: undefined
+          }
         })
       );
   }

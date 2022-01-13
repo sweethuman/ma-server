@@ -5,10 +5,12 @@ import {BodyParams, Context, HeaderParams, PathParams, QueryParams} from "@tsed/
 import {NotFound, NotModified} from "@tsed/exceptions";
 import {Student} from "../model/Student";
 import {StudentSocket} from "../providers/StudentSocket";
+import {Authorize} from "@tsed/passport";
 
 // TODO: pagination
 
 @Controller("/student")
+@Authorize("jwt")
 export class StudentController {
   constructor(private readonly studentsService: StudentService, private readonly studentSocket: StudentSocket) {}
 
