@@ -8,14 +8,18 @@ import methodOverride from "method-override";
 import cors from "cors";
 import "@tsed/ajv";
 import {config, rootDir} from "./config";
+import "@tsed/socketio";
 
 @Configuration({
   ...config,
   acceptMimes: ["application/json"],
   httpPort: process.env.PORT || 8083,
   httpsPort: false, // CHANGE
+  socketIO: {
+    path: "/socket"
+  },
   mount: {
-    "/rest": [`${rootDir}/controllers/**/*.ts`]
+    "/": [`${rootDir}/controllers/**/*.ts`]
   },
   views: {
     root: `${rootDir}/views`,
