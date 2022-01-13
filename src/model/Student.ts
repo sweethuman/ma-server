@@ -1,4 +1,4 @@
-import {DateTime, Email, ReadOnly, Required} from "@tsed/schema";
+import {DateTime, Email, Property, ReadOnly, Required} from "@tsed/schema";
 
 export class Student {
   @ReadOnly()
@@ -12,6 +12,7 @@ export class Student {
   public faculty: string;
   @Required()
   public phoneNumber: string;
+  @Property()
   public photoUrl: string;
   @ReadOnly()
   @DateTime()
