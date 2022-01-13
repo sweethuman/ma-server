@@ -10,6 +10,7 @@ import {Authorize} from "@tsed/passport";
 // TODO: pagination
 
 @Controller("/student")
+@Authorize("jwt")
 export class StudentController {
   constructor(private readonly studentsService: StudentService, private readonly studentSocket: StudentSocket) {}
 
@@ -27,10 +28,10 @@ export class StudentController {
       throw new NotModified("Students not modified since " + lastUpdated);
     }
     if (name) {
-      return this.studentsService.findByName(name);
+      return this.studentsService.findByName(name, ctx.data.assetIds);
     }
     ctx.response.setHeader("Last-Modified", lastUpdated.toUTCString());
-    return this.studentsService.findAll();
+    return this.studentsService.findAll(ctx.data.assetIds);
   }
 
   @Get("/:id")
@@ -56,7 +57,7 @@ export class StudentController {
   update(@BodyParams() student: Student, @PathParams("id") id: string) {
     const ourStudent = this.studentsService.updateById(id, student);
     if (ourStudent) {
-      this.studentSocket.broadcastStudent("created", ourStudent);
+      this.studentSocket.broadcastStudent("updated", ourStudent);
     }
     return ourStudent;
   }

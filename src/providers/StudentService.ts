@@ -51,12 +51,15 @@ export class StudentService {
     return this.students.find((s) => s.id === id);
   }
 
-  findByName(name: string) {
-    return this.students.filter((item) => item.name.indexOf(name) !== -1).sort((n1, n2) => -(n1.date.getTime() - n2.date.getTime()));
+  findByName(name: string, ids: string[]) {
+    return this.students
+      .filter((item) => item.name.indexOf(name) !== -1)
+      .filter((item) => ids.indexOf(item.id) !== -1)
+      .sort((n1, n2) => -(n1.date.getTime() - n2.date.getTime()));
   }
 
-  findAll(): Student[] {
-    return this.students.sort((n1, n2) => -(n1.date.getTime() - n2.date.getTime()));
+  findAll(ids: string[]): Student[] {
+    return this.students.sort((n1, n2) => -(n1.date.getTime() - n2.date.getTime())).filter((item) => ids.indexOf(item.id) !== -1);
   }
 
   getLastUpdated(): Date {
