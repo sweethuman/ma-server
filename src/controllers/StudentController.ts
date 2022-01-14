@@ -34,10 +34,10 @@ export class StudentController {
       throw new NotModified("Students not modified since " + lastUpdated);
     }
     if (name) {
-      return this.studentsService.findByName(name, ctx.data.assetIds, filter ? filter : "");
+      return this.studentsService.findByName(name, ctx.data.assetIds, filter ? filter : "", page ? parseInt(page) : 0);
     }
     ctx.response.setHeader("Last-Modified", lastUpdated.toUTCString());
-    return this.studentsService.findAll(ctx.data.assetIds, filter ? filter : "");
+    return this.studentsService.findAll(ctx.data.assetIds, filter ? filter : "", page ? parseInt(page) : 0);
   }
 
   @Get("/student/:id")

@@ -1,5 +1,7 @@
 import {Service} from "@tsed/di";
 import {Student} from "../model/Student";
+import _ from "lodash";
+import {email} from "@tsed/schema";
 
 @Service()
 export class StudentService {
@@ -8,8 +10,8 @@ export class StudentService {
   private lastId = 0;
 
   constructor() {
-    for (let i = 0; i < 3; i++) {
-      this.create(new Student(`${i}`, `student ${i}`, new Date(Date.now() + i), 1));
+    for (let i = 0; i < 40; i++) {
+      this.create(new Student(`${i}`, `student ${i}`, new Date(Date.now() + i), 1, `test${i}@test.com`, "Test"));
     }
   }
 
@@ -51,19 +53,23 @@ export class StudentService {
     return this.students.find((s) => s.id === id);
   }
 
-  findByName(name: string, ids: string[], facultyFilter: string) {
-    return this.students
+  findByName(name: string, ids: string[], facultyFilter: string, page: number) {
+    const std = this.students
       .filter((item) => item.name.indexOf(name) !== -1)
       .filter((item) => item.faculty.indexOf(facultyFilter) !== -1)
       .filter((item) => ids.indexOf(item.id) !== -1)
       .sort((n1, n2) => -(n1.date.getTime() - n2.date.getTime()));
+    const chunks = _.chunk(std, 5);
+    return page < chunks.length ? chunks[page] : [];
   }
 
-  findAll(ids: string[], facultyFilter: string): Student[] {
-    return this.students
+  findAll(ids: string[], facultyFilter: string, page: number): Student[] {
+    const std = this.students
       .sort((n1, n2) => -(n1.date.getTime() - n2.date.getTime()))
       .filter((item) => ids.indexOf(item.id) !== -1)
       .filter((item) => item.faculty.indexOf(facultyFilter) !== -1);
+    const chunks = _.chunk(std, 5);
+    return page < chunks.length ? chunks[page] : [];
   }
 
   getLastUpdated(): Date {
@@ -72,6 +78,7 @@ export class StudentService {
 
   getAvailableFilters(): string[] {
     const filterSet = new Set<string>();
+    filterSet.add("");
     this.students.forEach((item) => filterSet.add(item.faculty));
     return Array.from(filterSet);
   }

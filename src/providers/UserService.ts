@@ -8,7 +8,9 @@ export type User = {
 
 @Service()
 export class UserService {
-  private readonly users: User[] = [{email: "gheo@sweethuman.tech", password: "123456", assetIds: ["2", "3"]}];
+  private readonly users: User[] = [
+    {email: "gheo@sweethuman.tech", password: "123456", assetIds: ["2", "3", "4", "5", "6", "7", "8", "10", "11", "12", "14", "24"]}
+  ];
 
   create(user: Readonly<User>) {
     const ourUser: User = Object.assign({}, user);
