@@ -19,8 +19,23 @@ export class Student {
   public date: Date;
   @ReadOnly()
   public version: number;
+  @Property()
+  public lat: number;
+  @Property()
+  public lng: number;
 
-  constructor(id: string, name: string, date: Date, version: number, email = "", faculty = "", phoneNumber = "", photoUrl = null) {
+  constructor(
+    id: string,
+    name: string,
+    date: Date,
+    version: number,
+    email = "",
+    faculty = "",
+    phoneNumber = "",
+    photoUrl = null,
+    lat = 46.7524289,
+    lng = 23.5872008
+  ) {
     this.id = id;
     this.name = name;
     this.email = email;
@@ -29,5 +44,7 @@ export class Student {
     this.photoUrl = photoUrl != null ? photoUrl : "https://robohash.org/" + name + ".png";
     this.date = date;
     this.version = version;
+    this.lat = lat;
+    this.lng = lng;
   }
 }
